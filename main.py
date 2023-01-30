@@ -1,6 +1,7 @@
+from engine import Player
+
+# setting up pygame
 import pygame
-
-
 pygame.init()
 pygame.display.set_caption("Battleship")
 
@@ -10,7 +11,12 @@ H_MARGIN = SQ_SIZE * 4
 V_MARGIN = SQ_SIZE
 WIDTH = SQ_SIZE * 10 * 2 + H_MARGIN
 HEIGHT = SQ_SIZE *10 * 2 + V_MARGIN
+INDENT = 10
+
+# ship colours
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+GREEN = (50, 200, 150)
+
 
 # colours
 GREY = (40, 50, 60)
@@ -23,6 +29,24 @@ def draw_grid(left = 0, top = 0):
         y = top + i // 10 * SQ_SIZE
         square = pygame.Rect(x, y, SQ_SIZE, SQ_SIZE)
         pygame.draw.rect(SCREEN, WHITE, square, width = 3)
+
+# function to draw ships onto the pos grids
+def draw_ships(player, left = 0, top = 0):
+    for ship in player.ships:
+        x = left + ship.col * SQ_SIZE + INDENT
+        y = top + ship.row * SQ_SIZE + INDENT
+        if ship.orientation == "h":
+            width = ship.size * SQ_SIZE - 2*INDENT
+            height = SQ_SIZE - 2*INDENT
+        else:
+            width = SQ_SIZE - 2*INDENT
+            height = ship.size * SQ_SIZE - 2*INDENT
+        rectangle = pygame.Rect(x, y, width, height)
+        pygame.draw.rect(SCREEN, GREEN, rectangle, border_radius = 15)
+
+
+player1 = Player()
+player2 = Player()
 
 # pygame loop
 animating = True
@@ -46,6 +70,7 @@ while animating:
             # spacebar to pause and unpause the animation
             if event.key == pygame.K_SPACE:
                 pausing = not pausing
+
     # execution
     if not pausing:
 
@@ -59,6 +84,10 @@ while animating:
         # draw position grids
         draw_grid(top = (HEIGHT - V_MARGIN)//2 + V_MARGIN)
         draw_grid(left = (WIDTH - H_MARGIN)//2 + H_MARGIN)
+
+        # draw ships onto pos grids
+        draw_ships(player1, top = (HEIGHT - V_MARGIN)//2 + V_MARGIN)
+        draw_ships(player2, left = (WIDTH - H_MARGIN)//2 + H_MARGIN)
 
         # update screen
         pygame.display.flip()
