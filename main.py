@@ -1,4 +1,4 @@
-from engine import Player
+from engine import Game
 
 # setting up pygame
 import pygame
@@ -21,14 +21,22 @@ GREEN = (50, 200, 150)
 # colours
 GREY = (40, 50, 60)
 WHITE = (255, 250, 250)
+RED = (250, 50, 100)
+BLUE = (50, 150, 200)
+ORANGE = (250, 140, 20)
+COLORS = {"U": GREY, "M": BLUE, "H": ORANGE, "S": RED}
 
 # function to draw a grid
-def draw_grid(left = 0, top = 0):
+def draw_grid(player, left = 0, top = 0, search = False):
     for i in range(100):
         x = left + i % 10 * SQ_SIZE
         y = top + i // 10 * SQ_SIZE
         square = pygame.Rect(x, y, SQ_SIZE, SQ_SIZE)
         pygame.draw.rect(SCREEN, WHITE, square, width = 3)
+        if search:
+            x += SQ_SIZE // 2
+            y += SQ_SIZE // 2
+            pygame.draw.circle(SCREEN, COLORS[player.search[i]], (x,y), radius = SQ_SIZE//4)
 
 # function to draw ships onto the pos grids
 def draw_ships(player, left = 0, top = 0):
@@ -44,9 +52,7 @@ def draw_ships(player, left = 0, top = 0):
         rectangle = pygame.Rect(x, y, width, height)
         pygame.draw.rect(SCREEN, GREEN, rectangle, border_radius = 15)
 
-
-player1 = Player()
-player2 = Player()
+game = Game()
 
 # pygame loop
 animating = True
@@ -60,6 +66,20 @@ while animating:
         if event.type == pygame.QUIT:
             animating = False
 
+        #user clicks on mouse
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = pygame.mouse.get_pos()
+            if game.player1_turn and x < SQ_SIZE*10 and y < SQ_SIZE * 10: 
+                row = y // SQ_SIZE
+                col = x // SQ_SIZE
+                index = row * 10 + col
+                game.make_move(index)
+            elif not game.player1_turn and x > WIDTH - SQ_SIZE*10 and y > SQ_SIZE*10 + V_MARGIN:
+                ROW = (y - SQ_SIZE*10 - V_MARGIN) // SQ_SIZE
+                COL = (x - SQ_SIZE*10 - H_MARGIN) // SQ_SIZE
+                index = row * 10 + col
+                game.make_move(index)             
+            
         # user presses key on keyboard
         if event.type == pygame.KEYDOWN:
 
@@ -78,16 +98,16 @@ while animating:
         SCREEN.fill(GREY)
 
         # draw search grids
-        draw_grid()
-        draw_grid(left = (WIDTH - H_MARGIN)//2 + H_MARGIN, top = (HEIGHT - V_MARGIN)//2 + V_MARGIN)
+        draw_grid(game.player1, search = True)
+        draw_grid(game.player2, search = True, left = (WIDTH - H_MARGIN)//2 + H_MARGIN, top = (HEIGHT - V_MARGIN)//2 + V_MARGIN)
 
         # draw position grids
-        draw_grid(top = (HEIGHT - V_MARGIN)//2 + V_MARGIN)
-        draw_grid(left = (WIDTH - H_MARGIN)//2 + H_MARGIN)
+        draw_grid(game.player1, top = (HEIGHT - V_MARGIN)//2 + V_MARGIN)
+        draw_grid(game.player2, left = (WIDTH - H_MARGIN)//2 + H_MARGIN)
 
         # draw ships onto pos grids
-        draw_ships(player1, top = (HEIGHT - V_MARGIN)//2 + V_MARGIN)
-        draw_ships(player2, left = (WIDTH - H_MARGIN)//2 + H_MARGIN)
+        draw_ships(game.player1, top = (HEIGHT - V_MARGIN)//2 + V_MARGIN)
+        draw_ships(game.player2, left = (WIDTH - H_MARGIN)//2 + H_MARGIN)
 
         # update screen
         pygame.display.flip()
