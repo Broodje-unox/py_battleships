@@ -1,9 +1,12 @@
 from engine import Game
 
+
 # setting up pygame
 import pygame
 pygame.init()
+pygame.font.init()
 pygame.display.set_caption("Battleship")
+myfont = pygame.font.SysFont("fresansttf", 100)
 
 #global variables
 SQ_SIZE = 45
@@ -12,6 +15,9 @@ V_MARGIN = SQ_SIZE
 WIDTH = SQ_SIZE * 10 * 2 + H_MARGIN
 HEIGHT = SQ_SIZE *10 * 2 + V_MARGIN
 INDENT = 10
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+HUMAN1 = False
+HUMAN2 = False
 
 # ship colours
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -52,7 +58,7 @@ def draw_ships(player, left = 0, top = 0):
         rectangle = pygame.Rect(x, y, width, height)
         pygame.draw.rect(SCREEN, GREEN, rectangle, border_radius = 15)
 
-game = Game()
+game = Game(HUMAN1, HUMAN2)
 
 # pygame loop
 animating = True
@@ -91,6 +97,10 @@ while animating:
             if event.key == pygame.K_SPACE:
                 pausing = not pausing
 
+            # return key to restart the game
+            if event.key == pygame.K_RETURN:
+                game = Game(HUMAN1, HUMAN2)
+
     # execution
     if not pausing:
 
@@ -109,5 +119,16 @@ while animating:
         draw_ships(game.player1, top = (HEIGHT - V_MARGIN)//2 + V_MARGIN)
         draw_ships(game.player2, left = (WIDTH - H_MARGIN)//2 + H_MARGIN)
 
+        # computer moves
+        if not game.over and game.computer_turn:
+            game.random_ai()
+
+        # game over message
+        if game.over:
+            text = "Player " + str(game.result) + " wins!"
+            textbox = myfont.render(text, False, GREY, WHITE)
+            SCREEN.blit(textbox, (WIDTH//2 - 240, HEIGHT//2 - 50))
+
         # update screen
+        pygame.time.wait(100) # slows down AI choices
         pygame.display.flip()
