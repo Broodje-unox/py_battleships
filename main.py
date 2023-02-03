@@ -73,9 +73,9 @@ while animating:
             animating = False
 
         #user clicks on mouse
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and not game.over:
             x, y = pygame.mouse.get_pos()
-            if game.player1_turn and x < SQ_SIZE*10 and y < SQ_SIZE * 10: 
+            if game.player1_turn and x < SQ_SIZE*10 and y < SQ_SIZE*10: 
                 row = y // SQ_SIZE
                 col = x // SQ_SIZE
                 index = row * 10 + col
@@ -121,7 +121,10 @@ while animating:
 
         # computer moves
         if not game.over and game.computer_turn:
-            game.random_ai()
+           if game.player1_turn:
+                game.basic_ai()
+           else:
+                game.random_ai()
 
         # game over message
         if game.over:
