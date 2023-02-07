@@ -1,5 +1,5 @@
 from engine import Game
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  
 
 n_games = 5000
 n_shots = []
@@ -10,9 +10,9 @@ for i in range(n_games):
     game = Game(human1 = False, human2 = False)
     while not game.over:
         if game.player1_turn:
-            game.random_ai()
+            game.basic_ai()
         else: 
-            game.random_ai()
+            game.basic_ai()
     n_shots.append(game.n_shots)
     if game.result == 1:
         n_wins1 += 1

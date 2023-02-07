@@ -49,7 +49,7 @@ def draw_ships(player, left = 0, top = 0):
     for ship in player.ships:
         x = left + ship.col * SQ_SIZE + INDENT
         y = top + ship.row * SQ_SIZE + INDENT
-        if ship.orientation == "h":
+        if ship.orientation == "H":
             width = ship.size * SQ_SIZE - 2*INDENT
             height = SQ_SIZE - 2*INDENT
         else:

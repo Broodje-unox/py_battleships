@@ -5,14 +5,14 @@ class Ship:
         self.row = random.randrange(0,9)
         self.col = random.randrange(0,9)
         self.size = size
-        self.orientation = random.choice(["h", "v"])
+        self.orientation = random.choice(["H", "V"])
         self.indexes = self.compute_indexes()
 
     def compute_indexes(self):
         start_index = self.row * 10 + self.col
-        if self.orientation == "h":
+        if self.orientation == "H":
             return [start_index + i for i in range(self.size)]
-        elif self.orientation == "v":
+        elif self.orientation == "V":
             return [start_index + i*10 for i in range(self.size)]
 
 
